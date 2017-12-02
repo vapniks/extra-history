@@ -110,7 +110,7 @@ PROMPT is the prompt used in the read- function, and APPENDLST is a list of extr
 to `extra-history-templst'."
   (or histlist
       (let ((val (cdr (cl-find t extra-history-lists
-			       :test (lambda (x y) (eval (car y) `((prompt ,prompt))))))))
+			       :test (lambda (x y) (eval (car y)))))))
 	(if (symbolp val)
 	    val
 	  (setq extra-history-templst (append val appendlst))
