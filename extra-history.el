@@ -17,7 +17,7 @@
 ;;
 ;; Features that might be required by this library:
 ;;
-;; cl-lib
+;; cl-lib session
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -49,6 +49,7 @@
 ;; but you would prefer they use specialized history lists (e.g. for `nnmairix-search' search terms).
 ;; See the documentation of `extra-history-lists' for more details.
 ;;
+;; Note: you can use `session-save-session' in session.el to save history lists between sessions.
 ;;;;;;;;
 
 ;;; Customizable Options:
