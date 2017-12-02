@@ -48,7 +48,7 @@
 ;; This is useful when you have some commands that use default history lists (`minibuffer-history' & `regexp-history'),
 ;; but you would prefer they use specialized history lists (e.g. for `nnmairix-search' search terms).
 ;; See the documentation of `extra-history-lists' for more details.
-;; 
+;;
 ;;;;;;;;
 
 ;;; Customizable Options:
@@ -95,7 +95,10 @@ a history list to use if COND evaluates to non-nil and no other history list was
 as an argument to the read function. COND may make use `prompt' which is bound to
 the value of the prompt argument to the read- function.
 HIST can be either a symbol of a history list variable, or a list of strings which will 
-then be temporarily bound to `extra-history-templst'."
+then be temporarily bound to `extra-history-templst'.
+
+Note: you need to make sure that the history list symbols referred to by this option
+have been defined (e.g. using `defvar' or `defcustom')."
   :type '(alist :key-type (sexp :tag "Condition")
 		:value-type (choice (variable :tag "List variable")
 				    (repeat (string :tag "Element")))))
