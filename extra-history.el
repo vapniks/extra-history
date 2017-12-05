@@ -108,12 +108,15 @@ have been defined (e.g. using `defvar' or `defcustom')."
   "If HISTLIST is nil return a symbol to use as an argument for `read-from-minibuffer' or `read-string'.
 Uses `extra-history-lists' option to choose which symbol to return.
 PROMPT is the prompt used in the read- function, and APPENDLST is a list of extra items to append 
-to `extra-history-templst'."
+to `extra-history-templst', or the list from `extra-history-lists' if that is empty."
   (or histlist
       (let ((val (cdr (cl-find t extra-history-lists
 			       :test (lambda (x y) (eval (car y)))))))
 	(if (symbolp val)
-	    val
+	    (if (or (not val) (symbol-value val))
+		val
+	      (set val appendlst)
+	      val)
 	  (setq extra-history-templst (append val appendlst))
 	  'extra-history-templst))))
 
