@@ -57,7 +57,8 @@
 ;; Below is a list of customizable options:
 ;;
 ;;  `extra-history-lists'
-;;    Extra history lists for `read-string', `read-from-minibuffer' and `read-regexp'.
+;;    Extra history lists for `read-string', `read-from-minibuffer', `read-regexp',
+;;    `completing-read' and `completing-read-multiple'.
 ;;    default = nil
 
 ;;
@@ -134,6 +135,20 @@ This function advises `read-string'."
 	(extra-history-get (nth 2 args) (nth 0 args) minibuffer-history)
 	(nth 3 args) (nth 4 args)))
 
+(defun extra-history-completing-read-advice (args)
+  "If the HISTORY arg is nil, obtain a value for it from the `extra-history-lists' option.
+This function advises `completing-read'."
+  (list (nth 0 args) (nth 1 args) (nth 2 args) (nth 3 args) (nth 4 args)
+	(extra-history-get (nth 5 args) (nth 0 args) minibuffer-history)
+	(nth 6 args) (nth 7 args)))
+
+(defun extra-history-completing-read-multiple-advice (args)
+  "Append hint about `crm-separator' to prompt.
+This function advises `completing-read-multiple'"
+  (list (concat (nth 0 args) (format " (separator=%s): " crm-separator))
+	(nth 1 args) (nth 2 args) (nth 3 args) (nth 4 args)
+	(nth 5 args) (nth 6 args) (nth 7 args)))
+
 (defun extra-history-read-regexp-advice (args)
   "If the HISTORY arg is nil, obtain a value for it from the `extra-history-lists' option.
 This function advises `read-regexp'."
@@ -142,9 +157,16 @@ This function advises `read-regexp'."
 
 (advice-add 'read-from-minibuffer :filter-args #'extra-history-read-from-minibuffer-advice)
 (advice-add 'read-string :filter-args #'extra-history-read-string-advice)
+(advice-add 'completing-read :filter-args #'extra-history-completing-read-advice)
+(unless (not (featurep 'crm))
+  (advice-add 'completing-read-multiple :filter-args #'extra-history-completing-read-advice)
+  (advice-add 'completing-read-multiple :filter-args #'extra-history-completing-read-multiple-advice))
 (advice-add 'read-regexp :filter-args #'extra-history-read-regexp-advice)
 ;;(advice-remove 'read-from-minibuffer #'extra-history-read-from-minibuffer-advice)
 ;;(advice-remove 'read-string #'extra-history-read-string-advice)
+;;(advice-remove 'completing-read #'extra-history-completing-read-advice)
+;;(advice-remove 'completing-read-multiple #'extra-history-completing-read-advice)
+;;(advice-remove 'completing-read-multiple #'extra-history-completing-read-multiple-advice)
 ;;(advice-remove 'read-regexp #'extra-history-read-regexp-advice)
 
 (provide 'extra-history)
