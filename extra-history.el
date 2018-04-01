@@ -94,16 +94,18 @@ The aforementioned functions are advised to make use of this option if their his
 argument is nil.
 Each element of the alist is a pair (COND . HIST) where COND is an sexp, and HIST is 
 a history list to use if COND evaluates to non-nil and no other history list was passed 
-as an argument to the read function. COND may make use `prompt' which is bound to
+as an argument to the read function. COND may make use of `prompt' which is bound to
 the value of the prompt argument to the read- function.
-HIST can be either a symbol of a history list variable, or a list of strings which will 
-then be temporarily bound to `extra-history-templst'.
+HIST can be either a symbol of a history list variable, or a list of strings, or a function
+which returns a list of strings when called with no args. In the last 2 cases the list of
+strings will be temporarily bound to `extra-history-templst'.
 
 Note: you need to make sure that the history list symbols referred to by this option
 have been defined (e.g. using `defvar' or `defcustom')."
   :type '(alist :key-type (sexp :tag "Condition")
 		:value-type (choice (variable :tag "List variable")
-				    (repeat (string :tag "Element")))))
+				    (function :tag "Function returning a list")
+				    (repeat (string :tag "String element")))))
 
 (defun extra-history-get (histlist prompt &optional appendlst)
   "If HISTLIST is nil return a symbol to use as an argument for `read-from-minibuffer' or `read-string'.
@@ -118,7 +120,9 @@ to `extra-history-templst', or the list from `extra-history-lists' if that is em
 		val
 	      (set val appendlst)
 	      val)
-	  (setq extra-history-templst (append val appendlst))
+	  (setq extra-history-templst (if (functionp val)
+					  (or (funcall val) appendlst)
+					(append val appendlst)))
 	  'extra-history-templst))))
 
 (defun extra-history-read-from-minibuffer-advice (args)
